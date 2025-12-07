@@ -1,0 +1,3 @@
+# Core runtime has no third-party dependencies.
+# Add matplotlib if you want to visualize results:
+# matplotlib>=3.8.0
