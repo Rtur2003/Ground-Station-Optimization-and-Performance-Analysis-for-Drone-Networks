@@ -15,6 +15,15 @@ class Genetic:
         crossover_rate: float = 0.7,
         max_generations: int = 200,
     ) -> None:
+        if population_size <= 0:
+            raise ValueError("Population size must be positive")
+        if max_generations <= 0:
+            raise ValueError("Max generations must be positive")
+        if not 0 <= mutation_rate <= 1:
+            raise ValueError("Mutation rate must be between 0 and 1")
+        if not 0 <= crossover_rate <= 1:
+            raise ValueError("Crossover rate must be between 0 and 1")
+        
         self.population_size = population_size
         self.mutation_rate = mutation_rate
         self.crossover_rate = crossover_rate

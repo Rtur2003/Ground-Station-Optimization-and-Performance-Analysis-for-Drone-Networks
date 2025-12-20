@@ -67,6 +67,9 @@ def main():
     parser.add_argument("--seed", type=int, default=42, help="Randomness seed")
     args = parser.parse_args()
 
+    if args.iterations <= 0:
+        parser.error("Iterations must be positive")
+
     random.seed(args.seed)
     scenarios = get_scenarios()
     problem = scenarios[args.scenario]()

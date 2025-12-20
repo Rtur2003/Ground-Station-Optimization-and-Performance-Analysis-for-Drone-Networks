@@ -30,6 +30,13 @@ class AssignmentProblem:
         unassigned_penalty: float = 100.0,
         require_unique_station: bool = True,
     ) -> None:
+        if not drones:
+            raise ValueError("At least one drone is required")
+        if not stations:
+            raise ValueError("At least one station is required")
+        if unassigned_penalty < 0:
+            raise ValueError("Unassigned penalty must be non-negative")
+        
         self.drones = list(drones)
         self.stations = list(stations)
         self.unassigned_penalty = unassigned_penalty

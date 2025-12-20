@@ -16,6 +16,11 @@ class ParticleSwarm:
         cognitive_weight: float = 1.5,
         social_weight: float = 2.0,
     ) -> None:
+        if num_particles <= 0:
+            raise ValueError("Number of particles must be positive")
+        if max_iterations <= 0:
+            raise ValueError("Max iterations must be positive")
+        
         self.num_particles = num_particles
         self.max_iterations = max_iterations
         self.inertia_weight = inertia_weight
