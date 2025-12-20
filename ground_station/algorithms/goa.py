@@ -14,7 +14,7 @@ class Grasshopper:
 
     def solve(self, problem: AssignmentProblem) -> AssignmentResult:
         start = time.time()
-        population: List[List[Tuple[int, float]]] = [self._random_solution(problem) for _ in range(self.population_size)]
+        population: List[List[Tuple[int, float]]] = [problem.random_assignment(randomize_battery=True) for _ in range(self.population_size)]
         best_solution = population[0]
         best_fitness = problem.evaluate(best_solution)
         history: List[float] = [best_fitness]
@@ -51,13 +51,3 @@ class Grasshopper:
             elapsed_seconds=elapsed,
             history={"best_fitness": history},
         )
-
-    def _random_solution(self, problem: AssignmentProblem) -> List[Tuple[int, float]]:
-        available = list(range(len(problem.stations)))
-        random.shuffle(available)
-        sol: List[Tuple[int, float]] = []
-        for drone in problem.drones:
-            station_idx = available.pop() if available else -1
-            battery = random.uniform(0, drone.max_battery_level)
-            sol.append((station_idx, battery))
-        return sol

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+import random
 from dataclasses import dataclass, field
 from typing import Dict, Iterable, List, Optional, Sequence, Tuple, Union
 
@@ -30,6 +31,13 @@ class AssignmentProblem:
         unassigned_penalty: float = 100.0,
         require_unique_station: bool = True,
     ) -> None:
+        if not drones:
+            raise ValueError("At least one drone is required")
+        if not stations:
+            raise ValueError("At least one station is required")
+        if unassigned_penalty < 0:
+            raise ValueError("Unassigned penalty must be non-negative")
+        
         self.drones = list(drones)
         self.stations = list(stations)
         self.unassigned_penalty = unassigned_penalty
@@ -63,19 +71,22 @@ class AssignmentProblem:
 
         return total
 
-    def random_assignment(self) -> List[Tuple[int, float]]:
+    def random_assignment(self, randomize_battery: bool = False) -> List[Tuple[int, float]]:
         """
         Build a random feasible assignment (unique stations when available).
+        
+        Args:
+            randomize_battery: If True, assigns random battery levels; 
+                             if False, uses max battery level (default).
         """
         available = list(range(len(self.stations)))
+        random.shuffle(available)
         assignments: List[Tuple[int, float]] = []
 
         for drone in self.drones:
-            if available:
-                station_idx = available.pop()
-            else:
-                station_idx = -1
-            assignments.append((station_idx, drone.max_battery_level))
+            station_idx = available.pop() if available else -1
+            battery = random.uniform(0, drone.max_battery_level) if randomize_battery else drone.max_battery_level
+            assignments.append((station_idx, battery))
 
         return assignments
 
@@ -92,8 +103,15 @@ class AssignmentProblem:
         battery_level = max(0.0, min(battery_level, drone.max_battery_level))
         return station_idx, battery_level
 
+    def distance(self, a: Iterable[float], b: Iterable[float]) -> float:
+        """Calculate Euclidean distance between two points."""
+        ax, ay = a
+        bx, by = b
+        return math.sqrt((ax - bx) ** 2 + (ay - by) ** 2)
+
     @staticmethod
     def _distance(a: Iterable[float], b: Iterable[float]) -> float:
+        """Deprecated: Use distance() instead."""
         ax, ay = a
         bx, by = b
         return math.sqrt((ax - bx) ** 2 + (ay - by) ** 2)

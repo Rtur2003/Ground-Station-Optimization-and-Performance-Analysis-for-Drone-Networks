@@ -23,7 +23,7 @@ class ArtificialBeeColony:
     def solve(self, problem: AssignmentProblem) -> AssignmentResult:
         start = time.time()
         employed = [
-            (self._random_solution(problem), float("inf"), 0) for _ in range(self.num_employed_bees)
+            (problem.random_assignment(randomize_battery=True), float("inf"), 0) for _ in range(self.num_employed_bees)
         ]  # (solution, fitness, trials)
 
         best_solution = employed[0][0]
@@ -64,25 +64,15 @@ class ArtificialBeeColony:
             history={"best_fitness": history},
         )
 
-    def _random_solution(self, problem: AssignmentProblem) -> List[Tuple[int, float]]:
-        available = list(range(len(problem.stations)))
-        random.shuffle(available)
-        solution: List[Tuple[int, float]] = []
-        for drone in problem.drones:
-            station_idx = available.pop() if available else -1
-            battery = random.uniform(0, drone.max_battery_level)
-            solution.append((station_idx, battery))
-        return solution
-
     def _neighbor(self, problem: AssignmentProblem, solution: List[Tuple[int, float]]) -> List[Tuple[int, float]]:
         neighbor: List[Tuple[int, float]] = []
         available = list(range(len(problem.stations)))
         random.shuffle(available)
-        for station_idx, _ in solution:
+        for idx, (station_idx, _) in enumerate(solution):
             if station_idx >= 0 and station_idx in available:
                 available.remove(station_idx)
             new_station = available.pop() if available else -1
-            neighbor.append((new_station, random.uniform(0, problem.drones[0].max_battery_level)))
+            neighbor.append((new_station, random.uniform(0, problem.drones[idx].max_battery_level)))
         return neighbor
 
     def _employed_step(
@@ -99,7 +89,7 @@ class ArtificialBeeColony:
         self, problem: AssignmentProblem, solution: List[Tuple[int, float]], fitness: float, trials: int
     ) -> Tuple[List[Tuple[int, float]], float, int]:
         if trials > self.limit:
-            new_sol = self._random_solution(problem)
+            new_sol = problem.random_assignment(randomize_battery=True)
             return new_sol, problem.evaluate(new_sol), 0
         return solution, fitness, trials
 

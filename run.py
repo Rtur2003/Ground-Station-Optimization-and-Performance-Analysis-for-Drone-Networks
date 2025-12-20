@@ -32,21 +32,21 @@ def get_scenarios() -> Dict[str, ScenarioFactory]:
 
 def build_algorithm(name: str, iterations: int):
     name = name.lower()
-    if name == "pso":
-        return ParticleSwarm(max_iterations=iterations)
-    if name == "gwo":
-        return GreyWolf(max_iterations=iterations)
-    if name == "aco":
-        return AntColony(num_iterations=iterations)
-    if name == "ga":
-        return Genetic(max_generations=iterations)
-    if name == "abc":
-        return ArtificialBeeColony(max_iterations=iterations)
-    if name == "goa":
-        return Grasshopper(max_iterations=iterations)
-    if name == "dea":
-        return DifferentialEvolution(max_iterations=iterations)
-    raise ValueError(f"Unknown algorithm: {name}")
+    algorithms = {
+        "pso": lambda: ParticleSwarm(max_iterations=iterations),
+        "gwo": lambda: GreyWolf(max_iterations=iterations),
+        "aco": lambda: AntColony(num_iterations=iterations),
+        "ga": lambda: Genetic(max_generations=iterations),
+        "abc": lambda: ArtificialBeeColony(max_iterations=iterations),
+        "goa": lambda: Grasshopper(max_iterations=iterations),
+        "dea": lambda: DifferentialEvolution(max_iterations=iterations),
+    }
+    
+    if name not in algorithms:
+        available = ", ".join(sorted(algorithms.keys()))
+        raise ValueError(f"Unknown algorithm '{name}'. Available: {available}")
+    
+    return algorithms[name]()
 
 
 def main():
@@ -66,6 +66,9 @@ def main():
     parser.add_argument("--iterations", type=int, default=200, help="Iteration count")
     parser.add_argument("--seed", type=int, default=42, help="Randomness seed")
     args = parser.parse_args()
+
+    if args.iterations <= 0:
+        parser.error("Iterations must be positive")
 
     random.seed(args.seed)
     scenarios = get_scenarios()

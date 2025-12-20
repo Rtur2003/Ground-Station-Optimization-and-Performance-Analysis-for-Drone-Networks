@@ -74,7 +74,7 @@ class AntColony:
             weights = []
             for station_idx in available:
                 pheromone_component = pheromones[station_idx] ** self.alpha
-                distance = problem._distance(drone.position, problem.stations[station_idx].position)
+                distance = problem.distance(drone.position, problem.stations[station_idx].position)
                 heuristic = (1 / (distance + 1e-9)) ** self.beta
                 weights.append(pheromone_component * heuristic)
 
