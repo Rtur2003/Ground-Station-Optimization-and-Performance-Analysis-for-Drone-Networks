@@ -103,8 +103,15 @@ class AssignmentProblem:
         battery_level = max(0.0, min(battery_level, drone.max_battery_level))
         return station_idx, battery_level
 
+    def distance(self, a: Iterable[float], b: Iterable[float]) -> float:
+        """Calculate Euclidean distance between two points."""
+        ax, ay = a
+        bx, by = b
+        return math.sqrt((ax - bx) ** 2 + (ay - by) ** 2)
+
     @staticmethod
     def _distance(a: Iterable[float], b: Iterable[float]) -> float:
+        """Deprecated: Use distance() instead."""
         ax, ay = a
         bx, by = b
         return math.sqrt((ax - bx) ** 2 + (ay - by) ** 2)
