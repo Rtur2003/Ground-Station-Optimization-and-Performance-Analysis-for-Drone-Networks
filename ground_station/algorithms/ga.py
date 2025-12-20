@@ -31,7 +31,7 @@ class Genetic:
 
     def solve(self, problem: AssignmentProblem) -> AssignmentResult:
         start = time.time()
-        population = [self._random_individual(problem) for _ in range(self.population_size)]
+        population = [problem.random_assignment(randomize_battery=True) for _ in range(self.population_size)]
         history: List[float] = []
 
         for _ in range(self.max_generations):
@@ -63,16 +63,6 @@ class Genetic:
             elapsed_seconds=elapsed,
             history={"best_fitness": history},
         )
-
-    def _random_individual(self, problem: AssignmentProblem) -> List[Tuple[int, float]]:
-        available = list(range(len(problem.stations)))
-        random.shuffle(available)
-        individual: List[Tuple[int, float]] = []
-        for drone in problem.drones:
-            station_idx = available.pop() if available else -1
-            battery = random.uniform(0, drone.max_battery_level)
-            individual.append((station_idx, battery))
-        return individual
 
     def _select(self, population: List[List[Tuple[int, float]]], fitnesses: List[float]) -> List[Tuple[int, float]]:
         # roulette wheel selection (inverse fitness)

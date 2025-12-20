@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+import random
 from dataclasses import dataclass, field
 from typing import Dict, Iterable, List, Optional, Sequence, Tuple, Union
 
@@ -70,19 +71,22 @@ class AssignmentProblem:
 
         return total
 
-    def random_assignment(self) -> List[Tuple[int, float]]:
+    def random_assignment(self, randomize_battery: bool = False) -> List[Tuple[int, float]]:
         """
         Build a random feasible assignment (unique stations when available).
+        
+        Args:
+            randomize_battery: If True, assigns random battery levels; 
+                             if False, uses max battery level (default).
         """
         available = list(range(len(self.stations)))
+        random.shuffle(available)
         assignments: List[Tuple[int, float]] = []
 
         for drone in self.drones:
-            if available:
-                station_idx = available.pop()
-            else:
-                station_idx = -1
-            assignments.append((station_idx, drone.max_battery_level))
+            station_idx = available.pop() if available else -1
+            battery = random.uniform(0, drone.max_battery_level) if randomize_battery else drone.max_battery_level
+            assignments.append((station_idx, battery))
 
         return assignments
 

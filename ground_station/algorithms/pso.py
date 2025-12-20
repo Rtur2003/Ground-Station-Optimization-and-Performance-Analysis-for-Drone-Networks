@@ -33,7 +33,7 @@ class ParticleSwarm:
         num_drones = len(problem.drones)
 
         particles: List[List[Tuple[int, float]]] = [
-            self._random_particle(problem) for _ in range(self.num_particles)
+            problem.random_assignment(randomize_battery=True) for _ in range(self.num_particles)
         ]
         best_global = particles[0]
         best_global_fitness = problem.evaluate(best_global)
@@ -74,13 +74,3 @@ class ParticleSwarm:
             elapsed_seconds=elapsed,
             history={"best_fitness": fitness_history},
         )
-
-    def _random_particle(self, problem: AssignmentProblem) -> List[Tuple[int, float]]:
-        available = list(range(len(problem.stations)))
-        random.shuffle(available)
-        particle: List[Tuple[int, float]] = []
-        for drone in problem.drones:
-            station_idx = available.pop() if available else -1
-            battery = random.uniform(0, drone.max_battery_level)
-            particle.append((station_idx, battery))
-        return particle
