@@ -46,6 +46,9 @@ DRONE_CATALOG = [
 
 
 def build_drones(positions: Sequence[Tuple[float, float]]) -> List[Drone]:
+    if not positions:
+        raise ValueError("At least one drone position is required")
+    
     drones: List[Drone] = []
     for idx, (x, y) in enumerate(positions):
         model = DRONE_CATALOG[idx % len(DRONE_CATALOG)]
@@ -63,4 +66,7 @@ def build_drones(positions: Sequence[Tuple[float, float]]) -> List[Drone]:
 
 
 def build_stations(named_positions: Iterable[Tuple[str, Tuple[float, float]]]) -> List[Station]:
-    return [Station(name=name, x=pos[0], y=pos[1]) for name, pos in named_positions]
+    stations = [Station(name=name, x=pos[0], y=pos[1]) for name, pos in named_positions]
+    if not stations:
+        raise ValueError("At least one station is required")
+    return stations
