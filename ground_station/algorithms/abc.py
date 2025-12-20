@@ -78,11 +78,11 @@ class ArtificialBeeColony:
         neighbor: List[Tuple[int, float]] = []
         available = list(range(len(problem.stations)))
         random.shuffle(available)
-        for station_idx, _ in solution:
+        for idx, (station_idx, _) in enumerate(solution):
             if station_idx >= 0 and station_idx in available:
                 available.remove(station_idx)
             new_station = available.pop() if available else -1
-            neighbor.append((new_station, random.uniform(0, problem.drones[0].max_battery_level)))
+            neighbor.append((new_station, random.uniform(0, problem.drones[idx].max_battery_level)))
         return neighbor
 
     def _employed_step(
